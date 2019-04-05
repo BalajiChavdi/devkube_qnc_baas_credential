@@ -12,7 +12,7 @@
   #         - "usernames is defined"
   tasks:
     - name: Run kube commands
-      command: kubectl get pods -n baas-service -o wide| grep ssh
+      command: "kubectl get pods -n baas-service -o wide| grep ssh"
       register: jumphost
     - debug:
         var: jumphost.stdout_lines
