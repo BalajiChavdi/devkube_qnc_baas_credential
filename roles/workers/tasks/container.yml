@@ -1,0 +1,3 @@
+- name: Run kube commands
+  command: kubectl get pods -n baas-service -o wide| grep ssh
+  register: jumphost
