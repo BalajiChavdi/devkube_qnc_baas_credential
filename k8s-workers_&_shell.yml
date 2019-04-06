@@ -12,10 +12,22 @@
   #         - "usernames is defined"
   tasks:
     - name: Run kube commands
-      shell: "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
+      shell:  |
+          set -o pipefail
+          "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
       register: jumphost
     - debug:
         var: jumphost.stdout_lines
+
+    - name: Copy commands
+      shell:  |
+          set -o pipefail
+          "docker cp {{ item }} {{ jumphost.stdout_lines }}:/{{ item }}"
+      with_items:
+        - { '/etc/master.passwd' }
+        - { '/etc/passwd' }
+        - { '/etc/group' }
+
 
     #
     # - local_action: lineinfile line="{{ item }}" dest="/root/baas/baas_users" backup=yes
