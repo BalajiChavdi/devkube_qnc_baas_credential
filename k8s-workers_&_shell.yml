@@ -1,4 +1,3 @@
-#!/usr/bin/ansible-playbook
 ---
 
 - name: Effort to maintain credential of BaaS worker servers
@@ -12,17 +11,13 @@
   #         - "usernames is defined"
   tasks:
     - name: Run kube commands
-      shell:  |
-          set -o pipefail
-          "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
+      shell: "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
       register: jumphost
     - debug:
         var: jumphost.stdout_lines
 
     - name: Copy commands
-      shell:  |
-          set -o pipefail
-          "docker cp {{ item }} {{ jumphost.stdout_lines }}:/{{ item }}"
+      shell: "docker cp {{ item }} {{ jumphost.stdout_lines }}:/{{ item }}"
       with_items:
         - { '/etc/master.passwd' }
         - { '/etc/passwd' }
