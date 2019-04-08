@@ -17,7 +17,7 @@
         var: jumphost.stdout_lines
 
     - name: Copy commands
-      shell: "kubectl cp {{ item }} baas-service/{{ jumphost.stdout_lines }}:{{ item }}"
+      shell: "kubectl cp "{{ item }}" baas-service/{{ jumphost.stdout_lines }}:"{{ item }}""
       with_items:
         - { '/etc/master.passwd' }
         - { '/etc/passwd' }
