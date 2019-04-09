@@ -16,8 +16,6 @@
     - debug:
         var: jumphost.stdout_lines
         #var: jumphost.results|map(attribute='stdout_lines')|list
-    - debug:
-        var: {{jumphost.results|map(attribute='stdout_lines')|list}}
 
     - name: Copy commands
       shell: "kubectl cp {{ item.file }} baas-service/{{ item.jump }}:{{ item.file }}"
