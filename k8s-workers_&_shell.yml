@@ -21,12 +21,9 @@
       #with_items: "{{jumphost | json_query('results[].stdout_lines[]')}}"
       with_items:  "{{ jumphost.stdout_lines }}"
 
-    # - name: Copy commands
-    #   shell: "kubectl cp {{ item }} baas-service/{{ jumphost.results }}:{{ item }}"
-    #   with_items:
-    #     -  '/etc/master.passwd'
-    #     -  '/etc/passwd'
-    #     -  '/etc/group'
+    - name: Copy commands
+      shell: "kubectl cp /etc/master.passwd baas-service/{{ item }}:/etc/master.passwd; kubectl cp /etc/passwd baas-service/{{ item }}:/etc/passwd; kubectl cp /etc/group baas-service/{{ item }}:/etc/group"
+      with_items:  "{{ jumphost.stdout_lines }}"
 
 
     #
