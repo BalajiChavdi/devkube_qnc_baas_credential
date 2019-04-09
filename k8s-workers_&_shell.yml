@@ -11,14 +11,14 @@
   #         - "usernames is defined"
   tasks:
 
-     - name: Get a list of all pods from any namespace
-       k8s_facts:
-         kind: Pod
-       register: pod_list
-     - debug:
-         var: pod_list
-
-
+    - name: Get a list of all pods from any namespace
+      k8s_facts:
+        kind: Pod
+      register: pod_list
+    - debug:
+        var: pod_list
+    #
+    #
     # - name: Run kube commands
     #   shell: "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
     #   register: jumphost
