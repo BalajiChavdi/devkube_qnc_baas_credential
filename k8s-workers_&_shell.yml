@@ -10,19 +10,28 @@
   #       that:
   #         - "usernames is defined"
   tasks:
-    - name: Run kube commands
-      shell: "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
-      register: jumphost
-    - debug:
-        var: jumphost.stdout_lines
-        #var: jumphost.results|map(attribute='stdout_lines')|list
 
-    - name: Copy commands
-      shell: "kubectl cp {{ item.file }} baas-service/{{ item.jump }}:{{ item.file }}"
-      with_items:
-        - { file: '/etc/master.passwd', jump: {{jumphost.stdout_lines|map(attribute='stdout_lines')|list}} }
-        - { file: '/etc/passwd', jump: {{jumphost.stdout_lines|map(attribute='stdout_lines')|list}} }
-        - { file: '/etc/group', jump: {{jumphost.stdout_lines|map(attribute='stdout_lines')|list}} }
+     - name: Get a list of all pods from any namespace
+       k8s_facts:
+         kind: Pod
+       register: pod_list
+     - debug:
+         var: pod_list
+
+
+    # - name: Run kube commands
+    #   shell: "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
+    #   register: jumphost
+    # - debug:
+    #     var: jumphost.stdout_lines
+    #     #var: jumphost.results|map(attribute='stdout_lines')|list
+
+    # - name: Copy commands
+    #   shell: "kubectl cp {{ item.file }} baas-service/{{ item.jump }}:{{ item.file }}"
+    #   with_items:
+    #     - { file: '/etc/master.passwd', jump: {{jumphost.stdout_lines|map(attribute='stdout_lines')|list}} }
+    #     - { file: '/etc/passwd', jump: {{jumphost.stdout_lines|map(attribute='stdout_lines')|list}} }
+    #     - { file: '/etc/group', jump: {{jumphost.stdout_lines|map(attribute='stdout_lines')|list}} }
 
 
     #
