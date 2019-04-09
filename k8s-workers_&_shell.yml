@@ -19,7 +19,7 @@
     - debug:
         msg: "display {{item}}"
       #with_items: "{{jumphost | json_query('results[].stdout_lines[]')}}"
-      with_items:  "{{ vm_idst.stdout_lines }}"
+      with_items:  "{{ jumphost.stdout_lines }}"
 
     # - name: Copy commands
     #   shell: "kubectl cp {{ item }} baas-service/{{ jumphost.results }}:{{ item }}"
