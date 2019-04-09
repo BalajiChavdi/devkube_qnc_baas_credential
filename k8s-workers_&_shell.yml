@@ -20,9 +20,9 @@
     - name: Copy commands
       shell: "kubectl cp {{ item.file }} baas-service/{{ item.jump }}:{{ item.file }}"
       with_items:
-        - "{{ file: '/etc/master.passwd', jump: jumphost.results|map(attribute='stdout_lines')|list }}"
-        - "{{ file: '/etc/passwd', jump: jumphost.results|map(attribute='stdout_lines')|list }}"
-        - "{{ file: '/etc/group', jump: jumphost.results|map(attribute='stdout_lines')|list }}"
+        - {{ file: '/etc/master.passwd', jump: jumphost.results|map(attribute='stdout_lines')|list }}
+        - {{ file: '/etc/passwd', jump: jumphost.results|map(attribute='stdout_lines')|list }}
+        - {{ file: '/etc/group', jump: jumphost.results|map(attribute='stdout_lines')|list }}
 
 
     #
