@@ -13,16 +13,19 @@
     - name: Run kube commands
       shell: "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
       register: jumphost
-    - debug:
-        var: jumphost.results
+    # - debug:
+    #     var: jumphost.results
     #     #var: jumphost.results|map(attribute='stdout_lines')|list
+    - debug:
+        msg: "display {{item}}"
+        with_items: "{{jumphost | json_query('results[].stdout_lines[]')}}"
 
-    - name: Copy commands
-      shell: "kubectl cp {{ item }} baas-service/{{ jumphost.results }}:{{ item }}"
-      with_items:
-        -  '/etc/master.passwd'
-        -  '/etc/passwd'
-        -  '/etc/group'
+    # - name: Copy commands
+    #   shell: "kubectl cp {{ item }} baas-service/{{ jumphost.results }}:{{ item }}"
+    #   with_items:
+    #     -  '/etc/master.passwd'
+    #     -  '/etc/passwd'
+    #     -  '/etc/group'
 
 
     #
