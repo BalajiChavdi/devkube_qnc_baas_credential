@@ -5,14 +5,22 @@
   gather_facts: "no"
   vars_files:
     - "group_vars/prod-workers"
-  # pre_tasks:
-  #   - assert:
-  #       that:
-  #         - "usernames is defined"
+  pre_tasks:
+    - assert:
+        that:
+          - "usernames is defined"
   tasks:
 
-    # - local_action: lineinfile line="{{ item }}" dest="/root/baas/baas_users" backup=yes
-    #   with_items: "{{ usernames.strip().replace(' ', '').replace(',', '\n').split('\n') }}"
+    - name: read the baas_users file
+      shell: "cat /root/baas/baas_users"
+      register: ulist
+      delegate_to: 127.0.0.1
+
+    - name: Input usernames to baas files
+      local_action: lineinfile line="{{ item }}" dest="/root/baas/baas_users" backup=yes
+      with_items: "{{ usernames.strip().replace(' ', '').replace(',', '\n').split('\n') }}"
+      when: usernames not in ulist.stdout
+
 
     - copy:
         src: /usr/lib/python2.7/site-packages/ansible/modules/custom_modules/gen_pass.py
