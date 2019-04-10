@@ -14,6 +14,7 @@
     - name: read the baas_users file
       shell: "cat /root/baas/baas_users"
       register: ulist
+      delegate_to: 127.0.0.1
 
     - debug:
         #msg: "display {{item}}"
