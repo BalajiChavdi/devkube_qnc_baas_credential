@@ -5,10 +5,10 @@
   gather_facts: "no"
   vars_files:
     - "group_vars/prod-workers"
-  # pre_tasks:
-  #   - assert:
-  #       that:
-  #         - "usernames is defined"
+  pre_tasks:
+    - assert:
+        that:
+          - "usernames is defined"
   tasks:
 
     - name: read the baas_users file
@@ -19,6 +19,7 @@
     - debug:
         #msg: "display {{item}}"
         var: ulist
+      when: usernames not in ulist
 
     # - local_action: lineinfile line="{{ item }}" dest="/root/baas/baas_users" backup=yes
     #   with_items: "{{ usernames.strip().replace(' ', '').replace(',', '\n').split('\n') }}"
