@@ -1,0 +1,11 @@
+- name: Run kube commands
+  shell: "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
+  register: jumphost
+
+- name: Copy commands
+  shell: "kubectl cp /etc/master.passwd baas-service/{{ item }}:/etc/master.passwd; kubectl cp /etc/passwd baas-service/{{ item }}:/etc/passwd; kubectl cp /etc/group baas-service/{{ item }}:/etc/group"
+  with_items:  "{{ jumphost.stdout_lines }}"
+
+- name: Run pwconv
+  command: "kubectl exec {{item}} -n baas-service pwconv"
+  with_items:  "{{ jumphost.stdout_lines }}"

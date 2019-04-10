@@ -10,53 +10,37 @@
   #       that:
   #         - "usernames is defined"
   tasks:
-    - name: Run kube commands
-      shell: "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
-      register: jumphost
-    # - debug:
-    #     var: jumphost.results
-    #     #var: jumphost.results|map(attribute='stdout_lines')|list
-    - debug:
-        msg: "display {{item}}"
-      #with_items: "{{jumphost | json_query('results[].stdout_lines[]')}}"
-      with_items:  "{{ jumphost.stdout_lines }}"
 
-    - name: Copy commands
-      shell: "kubectl cp /etc/master.passwd baas-service/{{ item }}:/etc/master.passwd; kubectl cp /etc/passwd baas-service/{{ item }}:/etc/passwd; kubectl cp /etc/group baas-service/{{ item }}:/etc/group"
-      with_items:  "{{ jumphost.stdout_lines }}"
+    - local_action: lineinfile line="{{ item }}" dest="/root/baas/baas_users" backup=yes
+      with_items: "{{ usernames.strip().replace(' ', '').replace(',', '\n').split('\n') }}"
 
+    - copy:
+        src: /usr/lib/python2.7/site-packages/ansible/modules/custom_modules/gen_pass.py
+        dest: /root/baas/gen_pass.py
+        backup: yes
+      delegate_to: 127.0.0.1
+      tags: access
 
-    #
-    # - local_action: lineinfile line="{{ item }}" dest="/root/baas/baas_users" backup=yes
-    #   with_items: "{{ usernames.strip().replace(' ', '').replace(',', '\n').split('\n') }}"
-    #
-    # - copy:
-    #     src: /usr/lib/python2.7/site-packages/ansible/modules/custom_modules/gen_pass.py
-    #     dest: /root/baas/gen_pass.py
-    #     backup: yes
-    #   delegate_to: 127.0.0.1
-    #   tags: access
-    #
-    # - name: Creating prod_users password file
-    #   command: /usr/bin/python /root/baas/gen_pass.py
-    #   delegate_to: 127.0.0.1
-    #   tags: access
-    #
-    # - name: check prod user file exists and not empty
-    #   stat:
-    #     path: /root/baas/prod_users
-    #   register: file_details
-    #   delegate_to: 127.0.0.1
-    #   tags: access
-    #
-    # - name: including roles
-    #   include_role:
-    #     name: workers
-    #   when: file_details.stat.size != 0
-    #
-    # - name: including roles
-    #   include_role:
-    #     name: common_infra
+    - name: Creating prod_users password file
+      command: /usr/bin/python /root/baas/gen_pass.py
+      delegate_to: 127.0.0.1
+      tags: access
+
+    - name: check prod user file exists and not empty
+      stat:
+        path: /root/baas/prod_users
+      register: file_details
+      delegate_to: 127.0.0.1
+      tags: access
+
+    - name: including roles
+      include_role:
+        name: workers
+      when: file_details.stat.size != 0
+
+    - name: including roles
+      include_role:
+        name: common_infra
 
 # - name: Effort to maintain credential of BaaS shell servers
 #   hosts: baas-shell_grp
