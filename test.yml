@@ -5,10 +5,10 @@
   gather_facts: "no"
   vars_files:
     - "group_vars/prod-workers"
-  pre_tasks:
-    - assert:
-        that:
-          - "usernames is defined"
+  # pre_tasks:
+  #   - assert:
+  #       that:
+  #         - "usernames is defined"
   tasks:
 
     - name: read the baas_users file
