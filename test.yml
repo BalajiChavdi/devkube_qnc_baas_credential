@@ -20,7 +20,7 @@
         #msg: "display {{item}}"
 #        var: ulist
         var: inventory_hostname
-#      when: usernames not in ulist.stdout
+      when: ("jeganks" in ulist.stdout) and (inventory_hostname == "gngqnc014c")
 
     # - local_action: lineinfile line="{{ item }}" dest="/root/baas/baas_users" backup=yes
     #   with_items: "{{ usernames.strip().replace(' ', '').replace(',', '\n').split('\n') }}"
