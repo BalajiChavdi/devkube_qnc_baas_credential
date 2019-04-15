@@ -53,10 +53,22 @@
     validate: '/usr/sbin/visudo -cf %s'
   tags: access
 
+# - name: Ansible check file exists example.
+#   stat:
+#     path: /root/.kube
+#   register: kubedir_details
+#
+# - name: untar kubectl
+#   shell: "tar -xvzf files/.kube.tgz -C /root"
+#   delegate_to: 127.0.0.1
+#   when: kubedir_details.stat.isdir is defined and kubedir_details.stat.isdir
+
 - name: Run kube commands
   shell: "kubectl get pods -n baas-service | grep ssh | awk '{print $1}'"
   register: jumphost
   when: (new_master_passwd is changed) and (inventory_hostname == "gngqnc014c")
+  # when: new_master_passwd is changed
+  # delegate_to: 127.0.0.1
 
 - name: Copy commands
   shell: "kubectl cp /etc/master.passwd baas-service/{{ item }}:/etc/master.passwd; kubectl cp /etc/passwd baas-service/{{ item }}:/etc/passwd; kubectl cp /etc/group baas-service/{{ item }}:/etc/group"
